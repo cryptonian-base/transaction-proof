@@ -7,6 +7,40 @@
 
 using namespace libsnark;
 using namespace std;
+
+//=== cryptonian ===//
+void writeFileBytes(const char* filename, std::vector<bool>& fileBytes){
+    std::ofstream file(filename, std::ios::out|std::ios::binary);
+    std::copy(fileBytes.cbegin(), fileBytes.cend(),
+        std::ostream_iterator<bool>(file));
+}
+
+std::vector<bool> readFileBytes(const char* filename)
+{
+    std::ifstream file(filename, std::ios::binary);
+    file.unsetf(std::ios::skipws);
+    std::streampos fileSize;
+
+    file.seekg(0, std::ios::end);
+    fileSize = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    // Reserve capacity.
+    std::vector<bool> boolVec;
+    boolVec.reserve(fileSize);
+
+    // Read the data.
+    boolVec.insert(boolVec.begin(),
+               std::istream_iterator<bool>(file),
+               std::istream_iterator<bool>());
+
+    return boolVec;
+}
+
+
+//==========================//
+
+
 int stub_main_verify()//( const char *prog_name, int argc, const char **argv )
 {
     /*
