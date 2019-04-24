@@ -88,9 +88,6 @@ int stub_main_verify()//( const char *prog_name, int argc, const char **argv )
     bit_vector prev_leaf =  readFileBytes("prev_leaf.public");
     bit_vector root = readFileBytes("root.public");
 
-    writeFileBytes ("prev_leaf.test", prev_leaf);
-    writeFileBytes ("root.test", root);
-
     //status = verify_proof<default_r1cs_ppzksnark_pp>(keypair.vk, *proof, prev_leaf, root);
 
     return status;
