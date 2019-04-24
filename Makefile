@@ -12,7 +12,10 @@ LDLIBS += -lboost_system
 
 all:
 	$(CXX) -o main.o src/main.cpp -c $(CXXFLAGS)
-	$(CXX) -o main main.o $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
+	$(CXX) -o export.o src/export.cpp -c $(CXXFLAGS)
+	$(CXX) -o import.o src/import.cpp -c $(CXXFLAGS)
+	$(CXX) -o r1cs_gg_ppzksnark_zok.o src/r1cs_gg_ppzksnark_zok.tcc -c $(CXXFLAGS)
+	$(CXX) -o main main.o export.o import.o r1cs_gg_ppzksnark_zok.o $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
 
 clean:
 	$(RM) main.o main
