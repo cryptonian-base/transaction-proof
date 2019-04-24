@@ -7,7 +7,9 @@
 
 #include <iterator>
 
+// cryptonian
 #include "libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp"
+#include <boost/optional/optional_io.hpp>
 
 using namespace libsnark;
 using namespace std;
@@ -94,12 +96,14 @@ int stub_main_verify()//( const char *prog_name, int argc, const char **argv )
 //=== cryptonian - iostream from VerifyingKey and Proof ====//
     ifstream fin_proof("proof.stream");
     r1cs_ppzksnark_proof<default_r1cs_ppzksnark_pp> proof;
-    proof << fin_proof;
+    // proof >> fin_proof;
+    fin_proof >> proof;
     fin_proof.close();
 
     r1cs_ppzksnark_verification_key<default_r1cs_ppzksnark_pp> vk ;
     ifstream fin_vk ("vk.stream");
-    vk << fin_vk;
+    // vk >> fin_vk;
+    fin_vk >> vk;
     fin_vk.close();
 
     status = verify_proof<default_r1cs_ppzksnark_pp>(vk, proof, prev_leaf, root);
@@ -162,6 +166,7 @@ int main( int argc, char **argv )
     }
     else if( arg_cmd == "verify" )
     {
+        cout << "verifying proof...." << endl;
         gettimeofday(&start, NULL);
         assert(stub_main_verify());
         gettimeofday(&end, NULL);
