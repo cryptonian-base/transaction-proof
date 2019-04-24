@@ -5,6 +5,8 @@
 #include <iostream> // cerr
 #include <fstream>  // ofstream
 
+#include <iterator>
+
 using namespace libsnark;
 using namespace std;
 
@@ -13,28 +15,34 @@ void writeFileBytes(const char* filename, std::vector<bool>& fileBytes){
     std::ofstream file(filename, std::ios::out|std::ios::binary);
     std::copy(fileBytes.cbegin(), fileBytes.cend(),
         std::ostream_iterator<bool>(file));
+    
+    file.flush();
 }
 
 std::vector<bool> readFileBytes(const char* filename)
 {
-    std::ifstream file(filename, std::ios::binary);
-    file.unsetf(std::ios::skipws);
-    std::streampos fileSize;
-
-    file.seekg(0, std::ios::end);
-    fileSize = file.tellg();
+    std::ifstream file(filename, std::ifstream::binary);
+    vector<bool> out_ve;
+    
     file.seekg(0, std::ios::beg);
+    char ch;
+    while(file.good()) {
 
-    // Reserve capacity.
-    std::vector<bool> boolVec;
-    boolVec.reserve(fileSize);
+        file >> ch;
+        if (file.eof()) break;
+        switch(ch) {
+            case '0' :
+                out_ve.push_back(false);
+                break;
+            case '1' :
+                out_ve.push_back(true);
+                break;
+            default :
+                break;
+        }
+    }
 
-    // Read the data.
-    boolVec.insert(boolVec.begin(),
-               std::istream_iterator<bool>(file),
-               std::istream_iterator<bool>());
-
-    return boolVec;
+    return out_ve;
 }
 
 
@@ -77,6 +85,14 @@ int stub_main_verify()//( const char *prog_name, int argc, const char **argv )
     //r1cs_ppzksnark.hpp 에 있는 r1cs_ppzksnark_verification_key, r1cs_ppzksnark_proof 타입에 맞게 읽어야함... ㅠㅠ
     //status = verify_proof<default_r1cs_ppzksnark_pp>(keypair.vk, *proof, prev_leaf, root);
 
+    bit_vector prev_leaf =  readFileBytes("prev_leaf.public");
+    bit_vector root = readFileBytes("root.public");
+
+    writeFileBytes ("prev_leaf.test", prev_leaf);
+    writeFileBytes ("root.test", root);
+
+    //status = verify_proof<default_r1cs_ppzksnark_pp>(keypair.vk, *proof, prev_leaf, root);
+
     return status;
 }
 int main( int argc, char **argv )
@@ -101,6 +117,10 @@ int main( int argc, char **argv )
     bit_vector address_bits;
     size_t address = 0;
     generate_merkle_and_branch<sha256_two_to_one_hash_gadget<Fr<default_r1cs_ppzksnark_pp> > > (prev_leaf, leaf, root, address, address_bits, path);
+
+    //writeFileBytes(const char* filename, std::vector<bool>& fileBytes)
+    writeFileBytes("root.public", root);
+    writeFileBytes("prev_leaf.public", prev_hash);
 
     struct timeval start, end;
     //boost::optional<r1cs_ppzksnark_proof<default_r1cs_ppzksnark_pp>> proof = boost::none;
