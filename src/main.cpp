@@ -92,7 +92,7 @@ int stub_main_verify()//( const char *prog_name, int argc, const char **argv )
     bit_vector prev_leaf =  readFileBytes("prev_leaf.public");
     bit_vector root = readFileBytes("root.public");
 
-
+ 
 //=== cryptonian - iostream from VerifyingKey and Proof ====//
     ifstream fin_proof("proof.stream");
     r1cs_ppzksnark_proof<default_r1cs_ppzksnark_pp> proof;
